@@ -1,0 +1,187 @@
+What is a tornado?
+
+This is actually a topic with recent development from 2014
+
+https://www.researchgate.net/publication/276996454_A_Revised_Tornado_Definition_and_Changes_in_Tornado_Taxonomy
+
+This is a paper that goes over what a Tornado actually is, and this is the currently accepted taxonomy of tornadoes
+It ammends another Tornado taxonomy paper from 2009 by Agee and Jones (Agee is the author of this paper)
+
+The other predecessors were:
+Glickman, T., Ed., 2000: Tornado. Glossary of Meteorology. 2nded. Amer. Meteor. Soc., 585
+Huschke, R. E., Ed., 1959: Tornado. Glossary of Meteorology.Amer. Meteor. Soc., 781
+
+
+In both the 1958 and 2000 papers, they are built on multiple 'species' of tornadoes
+
+----------
+
+Tornadoes Before 1958: The Key Points
+No formal classification system.
+
+Tornadoes were often identified based on appearance
+(funnel cloud, shape) and destructive power (general damage).
+
+Some anecdotal and observational descriptions of tornadoes
+were based on severity or size.
+
+Tornadoes were typically classified only in broad, qualitative
+terms, like "weak" or "strong" based on their impact.
+
+
+----------
+
+1958 Paper - Original:
+The 1958 tornado taxonomy proposed the following species:
+
+Funnel-type Tornado: This was the most common type, defined by a visible 
+funnel-shaped cloud extending from the thunderstorm base to the ground.
+
+Water-spout-type Tornado: This species referred to tornadoes that occurred over water, 
+typically forming in association with waterspouts, and were often less intense than their funnel-type counterparts.
+
+Dust Devil-type Tornado: This type was related to dust devils, which are smaller, 
+weak vortexes that typically form in clear, hot conditions. They were categorized 
+as a distinct "species" in the 1958 taxonomy but were not as intense or destructive as other tornadoes.
+
+-----
+
+2000 Paper added species:
+
+The 2000 tornado taxonomy refined and expanded upon the 1958 classification. 
+It kept similar categories but with more clarification and differentiation:
+
+Classic Tornado: The typical funnel-type tornado, which forms from thunderstorms and 
+is characterized by a visible rotating column of air.
+
+Waterspout: Tornadoes occurring over bodies of water, generally less intense than 
+land-based tornadoes but still capable of causing damage.
+
+Dust Devil: These are weak, small vortices typically found over land in dry, warm conditions.
+They were seen as a tornado-like phenomenon but much weaker in terms of wind speed and intensity.
+
+Landspout: A category that was introduced in the 2000 paper, referring to weak, short-lived
+tornadoes that form in conditions similar to those of dust devils, but can also occur in the presence of thunderstorms.
+
+-----
+
+2009 paper moved away from the concept of 'species' - and made it 2 main types:
+
+
+1. Supercell Tornadoes: These are the most well-known and studied type of tornado, formed from the rotating 
+updraft (mesocyclone) of a supercell thunderstorm.
+
+2. Non-supercell Tornadoes (NSPs): Tornadoes not associated with supercells, which include:
+
+    - Landspouts: These are weak tornadoes formed from a non-rotating updraft in a storm,
+    often observed over land, resembling dust devils in appearance.
+
+    - Gustnadoes: These are short-lived tornadoes associated with strong wind gusts near 
+    the gust front of a thunderstorm.
+
+    - Waterspouts: Tornadoes that form over water, similar to tornadoes on land but typically weaker.
+
+-----
+
+The 2013 paper revised this by removing landspouts and gustnadoes from the Type 2 category
+and added a third type:
+
+
+1. Supercell Tornadoes
+
+    - Classic Supercell Tornadoes
+
+    - Weak Supercell Tornadoes
+
+2. Non-Supercell Tornadoes
+
+    - Landspouts
+
+    - Gustnadoes
+
+    - Other Non-Supercell Tornadoes
+
+3. Hybrid Tornadoes
+
+    - Transitional Tornadoes
+
+    - Other Hybrid Forms
+
+
+------
+
+These are more descriptive definitions of the current type and sub type:
+
+1. Supercell Tornadoes
+Description: Tornadoes that form within the context of a supercell thunderstorm, 
+which has a rotating updraft (mesocyclone).
+
+    Subtypes:
+
+        - Classic Supercell Tornadoes: Typically the most violent and long-lived, 
+        associated with large, well-developed supercells.
+
+        - Weak Supercell Tornadoes: Tornadoes from weaker supercells, generally 
+        smaller and shorter-lived.
+
+2. Non-Supercell Tornadoes
+Description: Tornadoes that do not form from a supercell, including those produced 
+by smaller-scale weather features.
+
+    Subtypes:
+
+        - Landspouts: Tornadoes that form from a convective cloud base, but do not 
+        involve a mesocyclone.
+
+        - Gustnadoes: Tornado-like circulations that form along the outflow boundary
+        of a thunderstorm.
+
+        - Other Non-Supercell Tornadoes: Tornadoes that form in various meteorological
+        settings not involving supercells, such as those from squall lines or other smaller
+        storm systems.
+
+3. Hybrid Tornadoes
+Description: Tornadoes that exhibit characteristics of both supercell and non-supercell tornadoes.
+
+    Subtypes:
+
+        - Transitional Tornadoes: Tornadoes that may begin as non-supercell tornadoes
+        but develop into supercell tornadoes, or vice versa, during their lifecycle.
+
+        - Other Hybrid Forms: Tornadoes that share a mix of characteristics, not easily
+        classified as purely supercell or non-supercell.
+
+-------
+
+From this I can say that there were less 'types' of tornadoes before 1958,
+and this could have affected the records because, there was a lower resolution of defintions
+
+They were built more on destructive power, and visual taxonomy rather than
+a more scientific one
+
+=======
+
+I predict that the data will show a slight boom after 1958
+
+My hypothesis is that there were more reported tornadoes due to there
+being a wider definition but the paper also had sociological effects,
+where the population were more aware of them.
+
+=======
+
+2000 had an even wider spectrum, so there could potentially be another
+knowledge based spike, as well as a sociological one
+
+=======
+
+2009 dropped the number of types, but made the classification more precise
+
+=======
+
+2013 further refined the classification system
+
+=======
+
+What are the circumstances for a Tornado to Occur?
+
+What are the concentrations?
