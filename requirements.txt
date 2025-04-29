@@ -13,3 +13,7 @@ seaborn>=0.12.2
 sqlalchemy>=1.4.37
 sympy>=1.10.1
 xgboost
+streamlit
+tensorflow>=2.10.0
+plotly>=5.0.0
+folium>=0.14.0
