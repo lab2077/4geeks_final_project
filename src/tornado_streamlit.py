@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+
 
 df_train = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df_train.csv')
 df_test = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df_test.csv')
