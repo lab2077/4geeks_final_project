@@ -1,0 +1,31 @@
+digraph {
+	graph [rankdir=LR]
+	subgraph cluster_temporal {
+		color=lightblue label="Factores Temporales" style=filled
+		year
+		month
+	}
+	subgraph cluster_geo {
+		color=lightyellow label="Factores Geográficos" style=filled
+		state
+		start_lat
+		start_lon
+	}
+	subgraph cluster_fisico {
+		color=lightpink label="Características Físicas" style=filled
+		length
+		width
+	}
+	magnitude [color=orange shape=diamond style=filled]
+	impacto [label="Impacto Humano" color=salmon shape=box3d style=filled]
+	year -> magnitude
+	month -> magnitude
+	state -> magnitude
+	start_lat -> magnitude
+	start_lon -> magnitude
+	length -> magnitude
+	width -> magnitude
+	magnitude -> impacto
+	impacto -> injuries
+	impacto -> fatalities
+}
