@@ -25,3 +25,6 @@ if st.button('Predecir Magnitud'):
     prediction = lstm_model.predict(input_data)
     predicted_class = np.argmax(prediction, axis=1)[0]  # Si es clasificación
     st.success(f'Magnitud Predicha: {predicted_class}')
+
+
+

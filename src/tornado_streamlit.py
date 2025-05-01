@@ -1,10 +1,14 @@
+import geopandas as gpd
+import shapely
 import streamlit as st
+from shapely.geometry import Point, Polygon, MultiPolygon
 import pandas as pd
 import pickle as pkl
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import folium
 from folium.plugins import MarkerCluster
+
 
 
 df_train = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df_train.csv')
@@ -32,7 +36,7 @@ st.markdown('''
 #------------- OBJETIVO
 
 
-st.markdown('''## 1. 🎯 Objetivo del Proyecto
+st.markdown('''## 1. Objetivo del Proyecto
        
 
 Desarrollar un modelo de **Machine Learning** para predecir la magnitud de tornados en EE.UU. basándonos en un conjunto de datos históricos llamado "US Tornado Dataset 1950 2021 (CSV)".
@@ -298,21 +302,6 @@ El gráfico nos permite observar rápidamente qué estados han sido más afectad
 ''')
 
 
-st.markdown('''
-
-
-### ***Mapa Interactivo de Tornados por Año***
-
-Este mapa interactivo permite seleccionar un año específico y visualizar las concentraciones de tornados ocurridos en ese periodo. Al filtrar los datos por año, podemos observar las ubicaciones de los tornados y sus trayectorias, lo que ofrece una nueva forma de analizar la distribución y frecuencia de estos fenómenos meteorológicos.
-
-Optamos por trabajar con los datos año por año en lugar de intentar una animación con todos los años simultáneamente para evitar la sobrecarga de datos. Esto nos permite obtener una visión más clara y manejable de las concentraciones de tornados sin perder detalles importantes.
-
-Este enfoque facilita el análisis de patrones y tendencias en los tornados, lo que puede ser útil para la toma de decisiones en estudios meteorológicos y gestión de riesgos.
-
-
-
-
-''')
 
 #  Frecuencia de Tornados por Estado del 2007 al 2021 GRAPHIC
 
@@ -348,9 +337,17 @@ legend_elements = [
 ax.legend(handles=legend_elements, loc='upper right')
 st.pyplot(fig)
 
+st.markdown('''
+---------
 
+### ***Mapa Interactivo de Tornados por Año***
 
+Este mapa interactivo permite seleccionar un año específico y visualizar las concentraciones de tornados ocurridos en ese periodo. Al filtrar los datos por año, podemos observar las ubicaciones de los tornados y sus trayectorias, lo que ofrece una nueva forma de analizar la distribución y frecuencia de estos fenómenos meteorológicos.
 
+Optamos por trabajar con los datos año por año en lugar de intentar una animación con todos los años simultáneamente para evitar la sobrecarga de datos. Esto nos permite obtener una visión más clara y manejable de las concentraciones de tornados sin perder detalles importantes.
+
+Este enfoque facilita el análisis de patrones y tendencias en los tornados, lo que puede ser útil para la toma de decisiones en estudios meteorológicos y gestión de riesgos.
+''')
 
 
 
@@ -402,10 +399,225 @@ st.markdown(f'Este mapa muestra la ubicación de los tornados y sus trayectorias
 st.components.v1.html(map._repr_html_(), height=500)
 
 
+#------------------------------------------- MACHINE LEARNING
 
-#st.dataframe()
+st.markdown('''
+----------
+## 6. Machine Learning Models & Experiments
+            
+-----------            
+            ''')
 
-#plt.figure(figsize=(8,8))
-#plt.scatter(x=df['cement'],y=df['compressive_strength'])
-#plt.title('Compressive Strength vs Concrete Density')
-#st.pyplot(plt)
+st.markdown("""
+Probamos múltiples modelos de aprendizaje automático para predecir la magnitud de los terremotos. Los tres modelos que evaluamos fueron:
+
+- **LSTM (Long Short-Term Memory)**
+- **Gradient Boosting**
+- **Random Forest**
+
+Todos los modelos fueron probados utilizando el mismo conjunto de parámetros de entrada:
+- `month`
+- `state`
+- `region`
+- `start latitude`
+- `start longitude`
+- `length`
+- `width`
+
+La **variable objetivo** para todos los modelos fue:
+- `magnitude`
+
+----------            
+""")
+
+st.markdown("""
+### ***📊 Comparación de Modelos de Clasificación para Predicción de Magnitud de Tornados***
+
+| Modelo                 | Accuracy | F1-Score (Macro) | Ventajas                                                       | Desventajas                                                 |
+|------------------------|----------|------------------|----------------------------------------------------------------|-------------------------------------------------------------|
+| **LSTM**               | 0.46     | 0.24             | Captura secuencias temporales y relaciones espaciales complejas | Bajo rendimiento general, especialmente en clases minoritarias |
+| **Gradient Boosting**  | 0.64     | 0.51             | Buen manejo de datos no lineales, rápido de entrenar            | Baja precisión para clases minoritarias                    |
+| **Random Forest**      | 0.70     | 0.54             | Precisión general más alta, robusto y fácil de interpretar       | Menor capacidad para captar secuencias o patrones temporales|
+
+🔍 **Observación Final**: El modelo **Random Forest optimizado** sigue siendo el más robusto para esta tarea. El **LSTM** no logró generalizar bien en el conjunto de prueba, especialmente con clases desbalanceadas.
+
+📌 Recomendación: Usar **Random Forest** para despliegue inicial en Streamlit, mientras se exploran mejoras o versiones refinadas del modelo LSTM.
+""")
+                   
+
+
+
+
+#---------------------- #PREDICITON TOOL
+
+
+# Cargar el modelo LSTM
+with open('/workspaces/4geeks_final_project/models/best_clf_rf.pkl', 'rb') as file:
+    clf_rf = pkl.load(file)
+
+# Título
+st.title('Predicción de Magnitud de Tornado 🌪️')
+
+# Inputs del usuario
+st.header('Datos del Tornado')
+
+#------------- MAP BOUNDS + LONG AND LAT INPUT
+
+
+# Load the shapefile
+usa = gpd.read_file("/workspaces/4geeks_final_project/data/raw/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp")
+
+# Filter for the USA
+usa = usa[usa['NAME'] == 'United States of America']
+
+# Function to extract coordinates from a Polygon or MultiPolygon
+def extract_coords(geom):
+    coords = []
+    if isinstance(geom, Polygon):
+        coords = list(geom.exterior.coords)
+    elif isinstance(geom, MultiPolygon):
+        for poly in geom.geoms:  # Iterate through each polygon in the MultiPolygon
+            coords.extend(list(poly.exterior.coords))
+    return coords
+
+# Extract coordinates from the USA boundary
+coords = extract_coords(usa.geometry.values[0])
+usa_boundary = Polygon(coords) if isinstance(usa.geometry.values[0], Polygon) else MultiPolygon([Polygon(coords)])
+
+# Streamlit input for user to enter longitude and latitude
+longitude = st.number_input("Enter Longitude:", min_value=-180.0, max_value=180.0)
+latitude = st.number_input("Enter Latitude:", min_value=-90.0, max_value=90.0)
+
+# Function to check if point is inside USA landmass (not water)
+def is_within_usa(long, lat):
+    point = Point(long, lat)  # Create a Point object from the coordinates
+    if usa_boundary.contains(point):
+        return True  # Point is inside USA
+    else:
+        return False  # Point is outside USA
+
+# Streamlit button to check if the input point is within the USA
+if st.button("Check if point is within the USA"):
+    if is_within_usa(longitude, latitude):
+        st.success("The point is within the boundaries of the USA and on land!")
+    else:
+        st.error("The point is outside the USA or on water.")
+
+
+
+#------------- WHAT STATE?
+
+# Now, we will check the state the point is in (if it is inside the USA)
+
+state_name = ''
+
+if is_within_usa(longitude, latitude):
+    # Load the shapefile for US states
+    states = gpd.read_file("/workspaces/4geeks_final_project/data/raw/cb_2022_us_state_20m/cb_2022_us_state_20m.shp")
+
+    # Create the Point object from the user input coordinates
+    point = Point(longitude, latitude)
+
+    # Check which state the point is in
+    state = states[states.geometry.contains(point)]
+
+    if not state.empty:
+        state_name = state.iloc[0]['NAME']
+        st.write(f"The point is located in {state_name}.")
+
+    else:
+        st.error("The point is not inside any state.")
+
+
+
+#------------- Convert State TO ABREV
+
+
+state_abbrev_map = {
+    'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR',
+    'California': 'CA', 'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE',
+    'Florida': 'FL', 'Georgia': 'GA', 'Hawaii': 'HI', 'Idaho': 'ID',
+    'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA', 'Kansas': 'KS',
+    'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+    'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS',
+    'Missouri': 'MO', 'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV',
+    'New Hampshire': 'NH', 'New Jersey': 'NJ', 'New Mexico': 'NM', 'New York': 'NY',
+    'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH', 'Oklahoma': 'OK',
+    'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+    'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT',
+    'Vermont': 'VT', 'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV',
+    'Wisconsin': 'WI', 'Wyoming': 'WY', 'District of Columbia': 'DC'
+}
+
+abbrev_state = state_abbrev_map.get(state_name, "Unknown")
+
+
+#------------- STATE TO REGION
+
+region = ''
+
+ne = ['CT', 'ME', 'MA', 'NH', 'RI', 'VT', 'NJ', 'NY', 'PA']
+s = ['DE', 'MD', 'VA', 'WV', 'NC', 'SC', 'GA', 'FL', 'KY', 'TN', 'AL', 'MS', 'LA', 'TX','DC']
+mw = ['IL', 'IN', 'IA', 'KS', 'MI', 'MN', 'MO', 'NE', 'ND', 'OH', 'SD', 'WI']
+w = ['AZ', 'CA', 'CO', 'ID', 'MT', 'NV', 'NM', 'OR', 'UT', 'WA', 'WY']
+
+
+if abbrev_state in ne:
+    region = 'e'
+elif abbrev_state in s:
+    region = 's'
+elif abbrev_state in mw:
+    region = 'mw'
+elif abbrev_state in w:
+    region = 'w'
+else:
+    region = 'Unknown'  # For states not in any region
+
+
+
+###---------------- Month input
+
+
+
+
+months = {
+    "January": 1, "February": 2, "March": 3, "April": 4,
+    "May": 5, "June": 6, "July": 7, "August": 8,
+    "September": 9, "October": 10, "November": 11, "December": 12
+}
+
+month_name = st.selectbox("Select a month:", list(months.keys()))
+month_number = months[month_name]
+
+st.write(f"You selected: {month_name} (#{month_number})")
+
+
+
+###--------------- Months into seasons:
+
+
+season = ''
+
+Winter = (12, 1, 2)
+Spring = (3, 4, 5)
+Summer = (6, 7, 8)
+Fall = (9, 10, 11)
+
+
+
+if month_number in Winter:
+    season = 'Winter'
+elif month_number in Spring:
+    season = 'Spring'
+elif month_number in Summer:
+    season = 'Summer'
+elif month_number in Fall:
+    season = 'Fall'
+else:
+    season = 'Unknown'
+    
+st.write(f"The seasons is {season}.")
+
+
+
+
