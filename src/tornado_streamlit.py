@@ -3,6 +3,7 @@ import shapely
 import streamlit as st
 from shapely.geometry import Point, Polygon, MultiPolygon
 import pandas as pd
+import numpy as np
 import pickle as pkl
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -16,6 +17,9 @@ df_test = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df_test.c
 df_val = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df_val.csv')
 df = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df.csv')
 df_raw = pd.read_csv('/workspaces/4geeks_final_project/data/raw/us_tornado_dataset_1950_2021.csv')
+length_average_df = pd.read_csv('/workspaces/4geeks_final_project/data/processed/state_month_length_avg_2015_to_2021.csv')
+width_average_df = pd.read_csv('/workspaces/4geeks_final_project/data/processed/state_month_width_avg_2015_to_2021.csv')
+
 
 
 #------------- TITLE
@@ -437,7 +441,7 @@ st.markdown("""
 |------------------------|----------|------------------|----------------------------------------------------------------|-------------------------------------------------------------|
 | **LSTM**               | 0.46     | 0.24             | Captura secuencias temporales y relaciones espaciales complejas | Bajo rendimiento general, especialmente en clases minoritarias |
 | **Gradient Boosting**  | 0.64     | 0.51             | Buen manejo de datos no lineales, rápido de entrenar            | Baja precisión para clases minoritarias                    |
-| **Random Forest**      | 0.70     | 0.54             | Precisión general más alta, robusto y fácil de interpretar       | Menor capacidad para captar secuencias o patrones temporales|
+| **Random Forest**      | 0.64     | 0.54             | Precisión general más alta, robusto y fácil de interpretar       | Menor capacidad para captar secuencias o patrones temporales|
 
 🔍 **Observación Final**: El modelo **Random Forest optimizado** sigue siendo el más robusto para esta tarea. El **LSTM** no logró generalizar bien en el conjunto de prueba, especialmente con clases desbalanceadas.
 
@@ -445,30 +449,20 @@ st.markdown("""
 """)
                    
 
+#-----------------------------|
+#-------------INPUT VARIABLES |
+#-----------------------------|
 
-
-
-#---------------------- #PREDICITON TOOL
-
-
-# Cargar el modelo LSTM
-with open('/workspaces/4geeks_final_project/models/best_clf_rf.pkl', 'rb') as file:
-    clf_rf = pkl.load(file)
-
-# Título
-st.title('Predicción de Magnitud de Tornado 🌪️')
-
-# Inputs del usuario
-st.header('Datos del Tornado')
 
 #------------- MAP BOUNDS + LONG AND LAT INPUT
 
 
-# Load the shapefile
+# Load the shapefile (USA boundary)
 usa = gpd.read_file("/workspaces/4geeks_final_project/data/raw/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp")
-
-# Filter for the USA
 usa = usa[usa['NAME'] == 'United States of America']
+
+# Ensure the projection is in EPSG:4326 (WGS84)
+usa = usa.to_crs(epsg=4326)
 
 # Function to extract coordinates from a Polygon or MultiPolygon
 def extract_coords(geom):
@@ -491,6 +485,7 @@ latitude = st.number_input("Enter Latitude:", min_value=-90.0, max_value=90.0)
 # Function to check if point is inside USA landmass (not water)
 def is_within_usa(long, lat):
     point = Point(long, lat)  # Create a Point object from the coordinates
+    print(f"Checking point: {point}")  # Debugging output
     if usa_boundary.contains(point):
         return True  # Point is inside USA
     else:
@@ -503,6 +498,15 @@ if st.button("Check if point is within the USA"):
     else:
         st.error("The point is outside the USA or on water.")
 
+    # Additional visualization to debug and ensure it's correctly plotted
+    fig, ax = plt.subplots(figsize=(10, 10))
+    usa.plot(ax=ax, color='lightblue')
+    ax.scatter(longitude, latitude, color='red', marker='x')  # Plot the point
+    plt.title(f"USA Boundary and Point Location\nLongitude: {longitude}, Latitude: {latitude}")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+    plt.show()
+    st.pyplot(fig)
 
 
 #------------- WHAT STATE?
@@ -515,6 +519,9 @@ if is_within_usa(longitude, latitude):
     # Load the shapefile for US states
     states = gpd.read_file("/workspaces/4geeks_final_project/data/raw/cb_2022_us_state_20m/cb_2022_us_state_20m.shp")
 
+    # Ensure states shapefile is in EPSG:4326
+    states = states.to_crs(epsg=4326)
+
     # Create the Point object from the user input coordinates
     point = Point(longitude, latitude)
 
@@ -524,14 +531,13 @@ if is_within_usa(longitude, latitude):
     if not state.empty:
         state_name = state.iloc[0]['NAME']
         st.write(f"The point is located in {state_name}.")
-
     else:
         st.error("The point is not inside any state.")
 
-
-
+        
 #------------- Convert State TO ABREV
 
+abbrev_state =''
 
 state_abbrev_map = {
     'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR',
@@ -573,12 +579,12 @@ elif abbrev_state in w:
 else:
     region = 'Unknown'  # For states not in any region
 
-
+#st.write(f"The region is {region}.")
 
 ###---------------- Month input
 
 
-
+month_number = int
 
 months = {
     "January": 1, "February": 2, "March": 3, "April": 4,
@@ -589,7 +595,7 @@ months = {
 month_name = st.selectbox("Select a month:", list(months.keys()))
 month_number = months[month_name]
 
-st.write(f"You selected: {month_name} (#{month_number})")
+#st.write(f"You selected: {month_name} (#{month_number})")
 
 
 
@@ -619,5 +625,103 @@ else:
 st.write(f"The seasons is {season}.")
 
 
+
+#-------------- # Average lenghth by month and state
+
+length_average_input = float
+
+if abbrev_state not in state_abbrev_map.values():
+    # Skip processing if the state abbreviation is not valid (not in the map)
+    pass
+else:
+    # Filter the length dataframe
+    filtered_length_df = length_average_df[(length_average_df['state'] == abbrev_state) & (length_average_df['month'] == month_number)]
+
+    # Check if there is data for length
+    if filtered_length_df.empty or filtered_length_df['length'].values[0] == 0:
+        st.error("No tornadoes have been recorded in this state during this month in over 5 years.")
+    else:
+        length_average_input = round(filtered_length_df['length'].values[0], 2)
+        st.write(f"The average tornado length for this month and state is {length_average_input}.")
+
+
+
+#-------------- # Average width by month and state
+
+width_average_input = float
+
+if abbrev_state not in state_abbrev_map.values():
+    # Skip processing if the state abbreviation is not valid (not in the map)
+    pass
+else:
+        # Filter the width dataframe
+    filtered_width_df = width_average_df[(width_average_df['state'] == abbrev_state) & (width_average_df['month'] == month_number)]
+
+    # Check if there is data for width
+    if filtered_width_df.empty or filtered_width_df['width'].values[0] == 0:
+        st.error("No tornadoes have been recorded in this state during this month in over 5 years.")
+    else:
+        width_average_input = round(filtered_width_df['width'].values[0], 2)
+        st.write(f"The average tornado width for this month and state is {width_average_input}.")
+
+#-------------- MODEL
+
+st.title('Predicción de Magnitud de Tornado 🌪️') 
+
+try:
+    # Check required variables
+    if (
+        longitude is None or
+        latitude is None or
+        not abbrev_state or
+        not region or
+        month_number is None or
+        not season
+    ):
+        raise ValueError("Missing input")
+
+    # Load the trained model
+    with open('/workspaces/4geeks_final_project/models/best_clf_rf.pkl', 'rb') as file:
+        rf_model = pkl.load(file)
+    
+        # Load the LabelEncoder
+    with open('/workspaces/4geeks_final_project/models/label_encoder_rf.pkl', 'rb') as f:
+        label_encoder_rf = pkl.load(f)
+
+    feature_names = rf_model.feature_names_in_
+    #st.write("Expected feature order:", feature_names)
+
+    # ----------------- Input Data -----------------
+    input_data = pd.DataFrame({
+        'start_latitude': [latitude],
+        'start_longitude': [longitude],
+        'length': [length_average_input],
+        'width': [width_average_input],
+        'month': [month_number],
+        'season': [season],
+        'state': [abbrev_state],
+        'region': [region]
+    })
+
+    # One-hot encode
+    categorical_cols = ['month', 'season', 'state', 'region']
+    input_data_encoded = pd.get_dummies(input_data, columns=categorical_cols, drop_first=False)
+
+    # Add missing columns
+    missing_cols = set(feature_names) - set(input_data_encoded.columns)
+    for col in missing_cols:
+        input_data_encoded[col] = 0
+
+    # Reorder columns
+    input_data_encoded = input_data_encoded[feature_names]
+
+    # Predict on button click
+    if st.button('Predecir Magnitud'):
+        prediction = rf_model.predict(input_data_encoded)
+        predicted_class = label_encoder_rf.inverse_transform(prediction)[0]
+        st.success(f'Magnitud Predicha: {predicted_class}')
+
+except Exception as e:
+    st.error(f"YOU CAN'T BREAK ME!! Error en la predicción: {e}")
 
 
