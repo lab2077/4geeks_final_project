@@ -1,0 +1,49 @@
+import geopandas as gpd
+import shapely
+import streamlit as st
+from streamlit_folium import st_folium
+from shapely.geometry import Point, Polygon, MultiPolygon
+import pandas as pd
+import numpy as np
+import pickle as pkl
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import folium
+from folium.plugins import MarkerCluster
+
+
+
+
+
+#-------------------- Slide Navigator
+
+# Initialize session state for slide index
+if 'slide' not in st.session_state:
+    st.session_state.slide = 0
+
+# Define your slides
+slides = [ "## Slide 1\nWelcome to the presentation!",
+    "## Slide 2\nIntro",
+    "## Slide 3\nWhat is a Tornado?",
+    "## Slide 4\nEF/F Scale Explained",
+    "## Slide 5\nEDA - Frequency by Month",
+    "## Slide 6\nEDA - Frequency by Month by State",
+    "## Slide 7\nEDA - Tornado Concentration",
+    "## Slide 8\nVariable Overview",
+    "## Slide 9\nModeling Approaches",
+    "## Slide 10\nResults Summary",
+    "## Slide 11\nModel Prediction Tool"]
+
+# Navigation buttons
+col1, col2, col3 = st.columns([1, 6, 1])
+with col1:
+    if st.button("⬅️ Previous") and st.session_state.slide > 0:
+        st.session_state.slide -= 1
+with col3:
+    if st.button("Next ➡️") and st.session_state.slide < len(slides) - 1:
+        st.session_state.slide += 1
+
+# Display current slide
+st.markdown(slides[st.session_state.slide])
+
+

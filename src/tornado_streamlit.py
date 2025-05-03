@@ -23,6 +23,9 @@ width_average_df = pd.read_csv('/workspaces/4geeks_final_project/data/processed/
 
 
 
+
+
+
 #------------- TITLE
 
 st.title('🌪️ Proyecto de Predicción de Magnitud de Tornados')
@@ -445,9 +448,8 @@ st.markdown("""
 
 #------------- MAP BOUNDS + LONG AND LAT INPUT
 
-longitude = int
-latitude = int
-
+longitude = float
+latitude = float
 # Load and filter the USA shapefile
 usa = gpd.read_file("/workspaces/4geeks_final_project/data/raw/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp")
 usa = usa[usa['NAME'] == 'United States of America'].to_crs(epsg=4326)
@@ -471,6 +473,13 @@ m = folium.Map(location=[39.5, -98.35], zoom_start=4)
 # Add click functionality to the map
 m.add_child(folium.LatLngPopup())
 
+# Define this function at the top level
+def is_within_usa(long, lat):
+    if long is None or lat is None:
+        return False  # Don't process if longitude or latitude is None
+    point = Point(long, lat)
+    return usa_boundary.contains(point)
+
 # Render the map and capture click input
 st.markdown("### Click on the map to select a point")
 map_data = st_folium(m, width=700, height=500)
@@ -484,10 +493,6 @@ if map_data and map_data.get("last_clicked"):
     st.write(f"Longitude: {longitude}, Latitude: {latitude}")
 
     # Check if the point is within the USA boundary
-    def is_within_usa(long, lat):
-        point = Point(long, lat)
-        return usa_boundary.contains(point)
-
     if is_within_usa(longitude, latitude):
         st.success("✅ The point is within the USA (on land)!")
     else:
@@ -499,7 +504,8 @@ if map_data and map_data.get("last_clicked"):
     ax.scatter(longitude, latitude, color='red', marker='x')
     ax.set_title(f"Point Location\nLongitude: {longitude}, Latitude: {latitude}")
     st.pyplot(fig)
-
+else:
+    st.warning("Please click on the map to select a point.")
 
 
 #------------- WHAT STATE?
