@@ -447,12 +447,6 @@ st.markdown("""
 
 longitude = int
 latitude = int
-import streamlit as st
-import folium
-from streamlit_folium import st_folium
-from shapely.geometry import Point, Polygon, MultiPolygon
-import geopandas as gpd
-import matplotlib.pyplot as plt
 
 # Load and filter the USA shapefile
 usa = gpd.read_file("/workspaces/4geeks_final_project/data/raw/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp")
