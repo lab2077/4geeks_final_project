@@ -362,7 +362,7 @@ Este enfoque facilita el análisis de patrones y tendencias en los tornados, lo 
 year_filter = st.selectbox('Selecciona el año:', [2017, 2018, 2019, 2020, 2021], index=2)
 
 # Filter data based on the selected year
-df_filtered = df_train[df_train['year'] == year_filter].copy()  # Cambia el año según el filtro
+df_filtered = df[df['year'] == year_filter].copy()  # Cambia el año según el filtro
 
 # Mapa
 map = folium.Map(location=[39.8283, -98.5795], zoom_start=4)
