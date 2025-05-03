@@ -57,19 +57,7 @@ st.markdown(''' ## 2. Conceptos (Marco teórico)
             
 #### 🌪️ Tornados: Definición, Clasificación e Impacto
 ---------     
-##### **❓ ¿Qué es un tornado?**
 
-**Un tornado** es una columna de aire que gira violentamente desde una tormenta eléctrica hasta la superficie terrestre.  
-
----------            
-
-###### **- Características principales:**  
-
-- Forma: A menudo de embudo característica  
-- Vientos: Pueden oscilar entre 105 km/h y más de 322 km/h (65 a más de 200 mph), dependiendo de la intensidad del tornado.  
-- Tamaño: Puede variar desde unos pocos metros hasta más de 2 kilómetros de ancho.
-- Duración: Generalmente dura desde unos pocos segundos hasta más de una hora.
-- Movimiento: Normalmente se desplaza a velocidades de 30 a 70 km/h, aunque puede variar.
 
             
 ###### **- Formación:**
@@ -723,5 +711,3 @@ try:
 
 except Exception as e:
     st.error(f"YOU CAN'T BREAK ME!! Error en la predicción: {e}")
-
-
