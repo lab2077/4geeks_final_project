@@ -1,0 +1,10 @@
+1 - Intro
+2 - What is a Tornado?
+3 - EF/F 
+4 - EDA - Frequencia por Mes
+5 - EDA - Frequencia por Mes por Estado
+6 - EDA - Concentracion de Tornados
+7 - Variables
+8 - Modelos
+9 - Resultados
+10 - Modelo Prediction Tool
