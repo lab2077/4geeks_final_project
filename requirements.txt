@@ -20,6 +20,7 @@ flatbuffers==25.2.10
 folium==0.19.5
 fonttools==4.57.0
 gast==0.6.0
+geopandas==1.0.1
 gitdb==4.0.12
 GitPython==3.1.44
 google-pasta==0.2.0
@@ -76,7 +77,9 @@ pyarrow==20.0.0
 pydeck==0.9.1
 Pygments==2.19.1
 PyMySQL==1.1.1
+pyogrio==0.10.0
 pyparsing==3.2.3
+pyproj==3.7.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
 pytz==2025.2
@@ -88,11 +91,13 @@ rpds-py==0.24.0
 scikit-learn==1.6.1
 scipy==1.15.2
 seaborn==0.13.2
+shapely==2.1.0
 six==1.17.0
 smmap==5.0.2
 SQLAlchemy==2.0.40
 stack-data==0.6.3
 streamlit==1.45.0
+streamlit_folium==0.25.0
 sympy==1.14.0
 tenacity==9.1.2
 tensorboard==2.19.0

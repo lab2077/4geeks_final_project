@@ -1,6 +1,7 @@
 import geopandas as gpd
 import shapely
 import streamlit as st
+from streamlit_folium import st_folium
 from shapely.geometry import Point, Polygon, MultiPolygon
 import pandas as pd
 import numpy as np
@@ -444,57 +445,67 @@ st.markdown("""
 
 #------------- MAP BOUNDS + LONG AND LAT INPUT
 
+longitude = int
+latitude = int
+import streamlit as st
+import folium
+from streamlit_folium import st_folium
+from shapely.geometry import Point, Polygon, MultiPolygon
+import geopandas as gpd
+import matplotlib.pyplot as plt
 
-# Load the shapefile (USA boundary)
+# Load and filter the USA shapefile
 usa = gpd.read_file("/workspaces/4geeks_final_project/data/raw/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp")
-usa = usa[usa['NAME'] == 'United States of America']
+usa = usa[usa['NAME'] == 'United States of America'].to_crs(epsg=4326)
 
-# Ensure the projection is in EPSG:4326 (WGS84)
-usa = usa.to_crs(epsg=4326)
-
-# Function to extract coordinates from a Polygon or MultiPolygon
+# Extract boundary geometry
 def extract_coords(geom):
     coords = []
     if isinstance(geom, Polygon):
         coords = list(geom.exterior.coords)
     elif isinstance(geom, MultiPolygon):
-        for poly in geom.geoms:  # Iterate through each polygon in the MultiPolygon
+        for poly in geom.geoms:
             coords.extend(list(poly.exterior.coords))
     return coords
 
-# Extract coordinates from the USA boundary
 coords = extract_coords(usa.geometry.values[0])
 usa_boundary = Polygon(coords) if isinstance(usa.geometry.values[0], Polygon) else MultiPolygon([Polygon(coords)])
 
-# Streamlit input for user to enter longitude and latitude
-longitude = st.number_input("Enter Longitude:", min_value=-180.0, max_value=180.0)
-latitude = st.number_input("Enter Latitude:", min_value=-90.0, max_value=90.0)
+# Initialize Folium map centered on the US
+m = folium.Map(location=[39.5, -98.35], zoom_start=4)
 
-# Function to check if point is inside USA landmass (not water)
-def is_within_usa(long, lat):
-    point = Point(long, lat)  # Create a Point object from the coordinates
-    print(f"Checking point: {point}")  # Debugging output
-    if usa_boundary.contains(point):
-        return True  # Point is inside USA
-    else:
-        return False  # Point is outside USA
+# Add click functionality to the map
+m.add_child(folium.LatLngPopup())
 
-# Streamlit button to check if the input point is within the USA
-if st.button("Check if point is within the USA"):
+# Render the map and capture click input
+st.markdown("### Click on the map to select a point")
+map_data = st_folium(m, width=700, height=500)
+
+longitude = latitude = None
+
+# Extract coordinates if a location was clicked
+if map_data and map_data.get("last_clicked"):
+    latitude = map_data["last_clicked"]["lat"]
+    longitude = map_data["last_clicked"]["lng"]
+    st.write(f"Longitude: {longitude}, Latitude: {latitude}")
+
+    # Check if the point is within the USA boundary
+    def is_within_usa(long, lat):
+        point = Point(long, lat)
+        return usa_boundary.contains(point)
+
     if is_within_usa(longitude, latitude):
-        st.success("The point is within the boundaries of the USA and on land!")
+        st.success("✅ The point is within the USA (on land)!")
     else:
-        st.error("The point is outside the USA or on water.")
+        st.error("❌ The point is outside the USA or on water.")
 
-    # Additional visualization to debug and ensure it's correctly plotted
+    # Optional visualization (matplotlib)
     fig, ax = plt.subplots(figsize=(10, 10))
     usa.plot(ax=ax, color='lightblue')
-    ax.scatter(longitude, latitude, color='red', marker='x')  # Plot the point
-    plt.title(f"USA Boundary and Point Location\nLongitude: {longitude}, Latitude: {latitude}")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
-    plt.show()
+    ax.scatter(longitude, latitude, color='red', marker='x')
+    ax.set_title(f"Point Location\nLongitude: {longitude}, Latitude: {latitude}")
     st.pyplot(fig)
+
 
 
 #------------- WHAT STATE?
@@ -627,7 +638,7 @@ else:
 
     # Check if there is data for length
     if filtered_length_df.empty or filtered_length_df['length'].values[0] == 0:
-        st.error("No tornadoes have been recorded in this state during this month in over 5 years.")
+        st.error("No tornadoes have been recorded in this state during this month in over 5 years. Low probabiliy of Tornado")
     else:
         length_average_input = round(filtered_length_df['length'].values[0], 2)
         st.write(f"The average tornado length for this month and state is {length_average_input}.")
@@ -647,7 +658,7 @@ else:
 
     # Check if there is data for width
     if filtered_width_df.empty or filtered_width_df['width'].values[0] == 0:
-        st.error("No tornadoes have been recorded in this state during this month in over 5 years.")
+        st.error("No tornadoes have been recorded in this state during this month in over 5 years. Low probabiliy of Tornado")
     else:
         width_average_input = round(filtered_width_df['width'].values[0], 2)
         st.write(f"The average tornado width for this month and state is {width_average_input}.")
