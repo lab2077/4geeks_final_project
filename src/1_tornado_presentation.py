@@ -10,16 +10,15 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import folium
 from folium.plugins import MarkerCluster
+import pickle
 
-
-
-df_train = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df_train.csv')
-df_test = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df_test.csv')
-df_val = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df_val.csv')
-df = pd.read_csv('/workspaces/4geeks_final_project/data/processed/df.csv')
-df_raw = pd.read_csv('/workspaces/4geeks_final_project/data/raw/us_tornado_dataset_1950_2021.csv')
-length_average_df = pd.read_csv('/workspaces/4geeks_final_project/data/processed/state_month_length_avg_2015_to_2021.csv')
-width_average_df = pd.read_csv('/workspaces/4geeks_final_project/data/processed/state_month_width_avg_2015_to_2021.csv')
+df_train = pd.read_csv('/data/processed/df_train.csv')
+df_test = pd.read_csv('/data/processed/df_test.csv')
+df_val = pd.read_csv('/data/processed/df_val.csv')
+df = pd.read_csv('data/processed/df.csv')
+df_raw = pd.read_csv('data/raw/us_tornado_dataset_1950_2021.csv')
+length_average_df = pd.read_csv('data/processed/state_month_length_avg_2015_to_2021.csv')
+width_average_df = pd.read_csv('data/processed/state_month_width_avg_2015_to_2021.csv')
 
 def slide_1_welcome():
     st.markdown(
@@ -743,11 +742,11 @@ def slide_12_prediction():
             raise ValueError("Missing input")
 
         # Load the trained model
-        with open('/workspaces/4geeks_final_project/models/best_clf_rf.pkl', 'rb') as file:
+        with open("models/best_clf_rf.pkl", "rb") as file:
             rf_model = pkl.load(file)
         
-            # Load the LabelEncoder
-        with open('/workspaces/4geeks_final_project/models/label_encoder_rf.pkl', 'rb') as f:
+         # Load the LabelEncoder
+        with open('models/label_encoder_rf.pkl', 'rb') as f:
             label_encoder_rf = pkl.load(f)
 
         feature_names = rf_model.feature_names_in_
