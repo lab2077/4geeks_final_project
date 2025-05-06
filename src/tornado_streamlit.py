@@ -498,12 +498,7 @@ if map_data and map_data.get("last_clicked"):
     else:
         st.error("❌ The point is outside the USA or on water.")
 
-    # Optional visualization (matplotlib)
-    fig, ax = plt.subplots(figsize=(10, 10))
-    usa.plot(ax=ax, color='lightblue')
-    ax.scatter(longitude, latitude, color='red', marker='x')
-    ax.set_title(f"Point Location\nLongitude: {longitude}, Latitude: {latitude}")
-    st.pyplot(fig)
+
 else:
     st.warning("Please click on the map to select a point.")
 
@@ -653,16 +648,17 @@ if abbrev_state not in state_abbrev_map.values():
     # Skip processing if the state abbreviation is not valid (not in the map)
     pass
 else:
-        # Filter the width dataframe
+
     filtered_width_df = width_average_df[(width_average_df['state'] == abbrev_state) & (width_average_df['month'] == month_number)]
 
-    # Check if there is data for width
+# Check if there is data for length
     if filtered_width_df.empty or filtered_width_df['width'].values[0] == 0:
-        st.error("No tornadoes have been recorded in this state during this month in over 5 years. Low probabiliy of Tornado")
+        pass
     else:
         width_average_input = round(filtered_width_df['width'].values[0], 2)
         st.write(f"The average tornado width for this month and state is {width_average_input}.")
 
+    
 #-------------- MODEL
 
 st.title('Predicción de Magnitud de Tornado 🌪️') 
