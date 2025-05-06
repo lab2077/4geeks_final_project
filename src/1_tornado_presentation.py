@@ -12,9 +12,9 @@ import folium
 from folium.plugins import MarkerCluster
 import pickle
 
-df_train = pd.read_csv('/data/processed/df_train.csv')
-df_test = pd.read_csv('/data/processed/df_test.csv')
-df_val = pd.read_csv('/data/processed/df_val.csv')
+df_train = pd.read_csv('data/processed/df_train.csv')
+df_test = pd.read_csv('data/processed/df_test.csv')
+df_val = pd.read_csv('data/processed/df_val.csv')
 df = pd.read_csv('data/processed/df.csv')
 df_raw = pd.read_csv('data/raw/us_tornado_dataset_1950_2021.csv')
 length_average_df = pd.read_csv('data/processed/state_month_length_avg_2015_to_2021.csv')
