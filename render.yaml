@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: tornado-streamlit-app
+    env: python
+    buildCommand: ""
+    startCommand: streamlit run src/1_tornado_presentation.py
+    plan: free
