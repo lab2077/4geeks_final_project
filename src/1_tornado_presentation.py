@@ -517,7 +517,7 @@ def slide_12_prediction():
     longitude = float
     latitude = float
     # Load and filter the USA shapefile
-    usa = gpd.read_file("/workspaces/4geeks_final_project/data/raw/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp")
+    usa = gpd.read_file("data/raw/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp")
     usa = usa[usa['NAME'] == 'United States of America'].to_crs(epsg=4326)
 
     # Extract boundary geometry
@@ -577,7 +577,7 @@ def slide_12_prediction():
 
     if is_within_usa(longitude, latitude):
         # Load the shapefile for US states
-        states = gpd.read_file("/workspaces/4geeks_final_project/data/raw/cb_2022_us_state_20m/cb_2022_us_state_20m.shp")
+        states = gpd.read_file("data/raw/cb_2022_us_state_20m/cb_2022_us_state_20m.shp")
 
         # Ensure states shapefile is in EPSG:4326
         states = states.to_crs(epsg=4326)
