@@ -504,8 +504,8 @@ def slide_11_results():
 
 def slide_12_prediction():
     st.markdown(f"""
-    ## Prediction  
-    Try out our prediction tool to see model output based on user inputs.
+    ## Predicción  
+    Pruebe nuestra herramienta de predicción para ver el resultado del modelo en función de las entradas del usuario.
     """)
 
     #-----------------------------|
@@ -548,7 +548,7 @@ def slide_12_prediction():
         return usa_boundary.contains(point)
 
     # Render the map and capture click input
-    st.markdown("### Click on the map to select a point")
+    st.markdown("### Haga clic en el mapa para seleccionar una ubicación")
     map_data = st_folium(m, width=1200, height=500)
 
     longitude = latitude = None
@@ -561,13 +561,13 @@ def slide_12_prediction():
 
         # Check if the point is within the USA boundary
         if is_within_usa(longitude, latitude):
-            st.success("✅ The point is within the USA (on land)!")
+            st.success("✅ El punto está dentro de los EE.UU. (en tierra)")
         else:
-            st.error("❌ The point is outside the USA or on water.")
+            st.error("❌ El punto está fuera de los EE.UU. o en el oceano.")
 
 
     else:
-        st.warning("Please click on the map to select a point.")
+        st.warning("Por favor haga clic en el mapa para seleccionar una ubicación.")
 
 
     #------------- WHAT STATE?
@@ -591,9 +591,9 @@ def slide_12_prediction():
 
         if not state.empty:
             state_name = state.iloc[0]['NAME']
-            st.write(f"The point is located in {state_name}.")
+            st.write(f"La ubicación se encuentra en {state_name}.")
         else:
-            st.error("The point is not inside any state.")
+            st.error("La ubicación no está dentro de ningún estado.")
 
             
     #------------- Convert State TO ABREV
@@ -648,12 +648,12 @@ def slide_12_prediction():
     month_number = int
 
     months = {
-        "January": 1, "February": 2, "March": 3, "April": 4,
-        "May": 5, "June": 6, "July": 7, "August": 8,
-        "September": 9, "October": 10, "November": 11, "December": 12
+        "Enero": 1, "Febrero": 2, "Marzo": 3, "Abril": 4,
+        "Mayo": 5, "Junio": 6, "Julio": 7, "Agosto": 8,
+        "Setiembre": 9, "Octubre": 10, "Noviembre": 11, "Diciembre": 12
     }
 
-    month_name = st.selectbox("Select a month:", list(months.keys()))
+    month_name = st.selectbox("Seleccione un mes:", list(months.keys()))
     month_number = months[month_name]
 
     #st.write(f"You selected: {month_name} (#{month_number})")
@@ -673,17 +673,17 @@ def slide_12_prediction():
 
 
     if month_number in Winter:
-        season = 'Winter'
+        season = 'Invierno'
     elif month_number in Spring:
-        season = 'Spring'
+        season = 'Primavera'
     elif month_number in Summer:
-        season = 'Summer'
+        season = 'Verano'
     elif month_number in Fall:
-        season = 'Fall'
+        season = 'Otoño'
     else:
         season = 'Unknown'
         
-    st.write(f"The seasons is {season}.")
+    st.write(f"La estación es {season}.")
 
 
 
@@ -700,10 +700,10 @@ def slide_12_prediction():
 
         # Check if there is data for length
         if filtered_length_df.empty or filtered_length_df['length'].values[0] == 0:
-            st.error("No tornadoes have been recorded in this state during this month in over 5 years. Low probabiliy of Tornado")
+            st.error("No se han registrado tornados en este estado durante este mes en más de 5 años. Baja probabilidad de tornado.")
         else:
             length_average_input = round(filtered_length_df['length'].values[0], 2)
-            st.write(f"The average tornado length for this month and state is {length_average_input}.")
+            st.write(f"El largo de la trayectoria promedio de un tornado para este mes y estado es {length_average_input} millas.")
 
 
 
@@ -723,7 +723,7 @@ def slide_12_prediction():
             pass
         else:
             width_average_input = round(filtered_width_df['width'].values[0], 2)
-            st.write(f"The average tornado width for this month and state is {width_average_input}.")
+            st.write(f"El ancho promedio de un tornado para este mes y estado es {width_average_input} yardas.")
 
         
     #-------------- MODEL
@@ -784,7 +784,7 @@ def slide_12_prediction():
             st.success(f'Magnitud Predicha: {predicted_class}')
 
     except Exception as e:
-        st.error(f"YOU CAN'T BREAK ME!! Error en la predicción: {e}")
+        st.error(f"Error en la predicción: {e}")
 
 
 # -------------------- Slide Navigator
